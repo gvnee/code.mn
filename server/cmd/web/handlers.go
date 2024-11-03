@@ -8,7 +8,7 @@ import (
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 	w.Write([]byte("Hello"))
@@ -17,7 +17,7 @@ func (app *Application) home(w http.ResponseWriter, r *http.Request) {
 func (app *Application) showBlog(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)

@@ -18,6 +18,7 @@ type Config struct {
 }
 
 func main() {
+	// parse runtime configs
 	cfg := new(Config)
 	flag.StringVar(&cfg.Addr, "addr", ":4000", "HTTP network address")
 	flag.Parse()
@@ -31,20 +32,11 @@ func main() {
 		infoLog:  infoLog,
 	}
 
-	// special kind of handler that passes requests on to other handlers
-	mux := http.NewServeMux()
-
-	// requests are handled concurrently!
-	// HandleFunc: transforms given function to a handler and then registers it
-	mux.HandleFunc("GET /", app.home)
-	mux.HandleFunc("GET /blog/{id}", app.showBlog)
-	mux.HandleFunc("POST /blog/create", app.createBlog)
-
 	// to use custom error logger
 	srv := &http.Server{
 		Addr:     cfg.Addr,
 		ErrorLog: errorLog,
-		Handler:  mux,
+		Handler:  app.routes(),
 	}
 
 	infoLog.Printf("Starting server on %s", cfg.Addr)
